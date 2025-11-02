@@ -1,0 +1,13 @@
+# *
+User-agent: *
+Allow: /
+
+# *
+User-agent: *
+Disallow: /api/*
+
+# Host
+Host: https://www.nextgenteches.com
+
+# Sitemaps
+Sitemap: https://www.nextgenteches.com/sitemap.xml
