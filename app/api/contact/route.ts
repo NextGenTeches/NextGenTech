@@ -52,7 +52,7 @@
 //     );
 //   }
 // }
-export const runtime = "nodejs"; // ✅ REQUIRED for Nodemailer on Vercel
+export const runtime = "nodejs"; // ✅ Required for Nodemailer on Vercel
 
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     const { name, email, phone, company, service, budget, message } =
       await req.json();
 
-    // Basic validation
+    // ✅ Basic validation
     if (!name || !email || !service || !message) {
       return NextResponse.json(
         { success: false, error: "Missing required fields" },
@@ -70,16 +70,17 @@ export async function POST(req: Request) {
       );
     }
 
+    // ✅ SMTP Transporter (Hostinger, port 587)
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT),
-      secure: Number(process.env.SMTP_PORT) === 465, // ✅ SSL only for port 465
+      port: Number(process.env.SMTP_PORT) || 587,
+      secure: false, // ✅ 587 uses TLS, not SSL
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
       tls: {
-        rejectUnauthorized: false, // ✅ Required for Hostinger (self-signed cert)
+        rejectUnauthorized: false, // ✅ Required for Hostinger shared server
       },
     });
 
@@ -104,7 +105,7 @@ export async function POST(req: Request) {
       message: "Email sent successfully!",
     });
   } catch (error: any) {
-    console.error("📌 EMAIL SEND ERROR:", error); // ✅ shows full SMTP error in Vercel logs
+    console.error("📌 EMAIL SEND ERROR:", error);
     return NextResponse.json(
       { success: false, error: error.message || "Failed to send email." },
       { status: 500 }
